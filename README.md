@@ -67,6 +67,18 @@ npm test
 npm run build
 ```
 
+## Azure Static Web Apps
+
+The GitHub workflow builds with Node.js 22 using `npm ci` and `npm run build:azure`, then uploads the static `out/` directory with Azure's build step disabled. Spring Boot remains the only backend; no Next.js server or Cloudflare Worker is deployed to Azure.
+
+`NEXT_PUBLIC_API_BASE_URL` must be an HTTPS backend origin without `/api/v1` and is embedded at build time. The workflow uses the GitHub repository variable of that name, defaulting to `https://habitat-bvbseyctaqf5ehfz.swedencentral-01.azurewebsites.net`. Changing it requires a new build/deployment. Allow the deployed dashboard's exact HTTPS origin in the backend's `APP_CORS_ALLOWED_ORIGINS`.
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://habitat-bvbseyctaqf5ehfz.swedencentral-01.azurewebsites.net npm run build:azure
+```
+
+Local development and `npm run build` retain Vinext. The former Sites hosting plugin is no longer enabled: neither build requires the local `.openai/hosting.json` file, and private local tool state must not be committed.
+
 ## Projektstruktur
 
 | Pfad | Zweck |
@@ -75,7 +87,8 @@ npm run build
 | `components/ExpertDashboard.tsx` | Anmeldung, Regelverwaltung, Historie und Simulation |
 | `components/RuleEditor.tsx` | Backend-kataloggesteuertes Regelformular |
 | `components/ui/` | Nur die vom Regeleditor verwendeten UI-Bausteine |
-| `build/`, `scripts/`, `vite.config.ts` | Aktive Vinext-/Cloudflare-Build- und Startwerkzeuge |
+| `scripts/`, `vite.config.ts` | Lokale Vinext-Werkzeuge und separater statischer Azure-Build |
+| `.github/workflows/` | Build und Upload von `out/` zu Azure Static Web Apps |
 | `lib/api.ts` | Spring-API-Client, DTOs und ODER-Transportnormalisierung |
 | `lib/i18n.tsx`, `lib/language.ts` | Sprachumschaltung, gespeicherte Sprachpräferenz und reine Katalog-Anzeigetexte |
 | `tests/api.test.mjs`, `tests/language.test.mjs` | Transport-, API-Client- und Sprachtests ohne medizinische Zweit-Engine |
