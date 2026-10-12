@@ -1,0 +1,409 @@
+.rule-editor,
+.rule-editor-dialog {
+  color-scheme: light;
+  color: #19324c;
+  font-family: inherit;
+  line-height: 1.5;
+  --background: #fff;
+  --foreground: #19324c;
+  --muted-foreground: #62748a;
+  --input: #d6e1e8;
+  --ring: #0d9488;
+  --accent: #edf8f6;
+  --accent-foreground: #115e59;
+}
+
+.rule-editor {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 1360px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+}
+
+.rule-editor *,
+.rule-editor-dialog * {
+  box-sizing: border-box;
+}
+
+.rule-editor :where(div, span, p, label, button),
+.rule-editor-dialog :where(div, p, li) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rule-editor-layout,
+.rule-editor-content {
+  display: grid;
+  min-width: 0;
+  gap: 24px;
+  align-items: start;
+}
+
+.rule-editor-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 2px 4px;
+}
+
+.rule-editor-intro h1 {
+  margin-top: 8px;
+  color: #132d48;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.rule-editor [data-slot="card"] {
+  min-width: 0;
+  gap: 24px;
+  padding: 28px 0;
+  border: 1px solid #dde6ed;
+  border-radius: 20px;
+  background: #fff;
+  color: #19324c;
+  box-shadow: 0 4px 24px -12px #19324c24;
+}
+
+.rule-editor [data-slot="card-header"],
+.rule-editor [data-slot="card-content"],
+.rule-editor [data-slot="card-footer"] {
+  padding-right: 28px;
+  padding-left: 28px;
+}
+
+.rule-editor-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e8eef2;
+}
+
+.rule-editor-section-number {
+  display: grid;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid #cde9e3;
+  border-radius: 12px;
+  background: #edf8f5;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.rule-editor-section-heading h2 {
+  color: #19324c;
+  font-size: 17px;
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+}
+
+.rule-editor-section-heading p {
+  line-height: 1.65;
+}
+
+.rule-editor-field {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+}
+
+.rule-editor-field-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.rule-editor-demographics,
+.rule-editor-condition-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: end;
+}
+
+.rule-editor [data-slot="input"],
+.rule-editor [data-slot="textarea"],
+.rule-editor select {
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  border: 1px solid #d6e1e8;
+  border-radius: 10px;
+  background: #fff;
+  color: #19324c;
+  box-shadow: 0 1px 2px #19324c04;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.rule-editor [data-slot="textarea"] {
+  min-height: 96px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.rule-editor input::placeholder,
+.rule-editor textarea::placeholder {
+  color: #7a899c;
+}
+
+.rule-editor :is(input, textarea, select):focus-visible {
+  border-color: #0d9488;
+  outline: 3px solid #ccfbf1;
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+.rule-editor button,
+.rule-editor-dialog button {
+  cursor: pointer;
+  outline: none;
+}
+
+.rule-editor button:focus-visible,
+.rule-editor-dialog button:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 3px;
+}
+
+.rule-editor button:disabled,
+.rule-editor-dialog button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.rule-editor [data-slot="button"],
+.rule-editor-dialog [data-slot="button"] {
+  height: auto;
+  min-height: 42px;
+  max-width: 100%;
+  border-radius: 10px;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.rule-editor [data-slot="button"][data-variant="outline"],
+.rule-editor-dialog [data-slot="button"][data-variant="outline"] {
+  border-color: #d6e1e8;
+  background: #fff;
+  color: #25465a;
+}
+
+.rule-editor [data-slot="button"][data-variant="default"] {
+  padding: 12px 20px;
+  background: #0f766e;
+  color: #fff;
+  box-shadow: 0 3px 8px #0f766e20;
+}
+
+.rule-editor [data-slot="button"][data-variant="default"]:hover:not(:disabled) {
+  background: #115e59;
+}
+
+.rule-editor [data-slot="button"][data-variant="ghost"] {
+  color: #62748a;
+}
+
+.rule-editor [data-slot="button"][data-size^="icon"] {
+  width: 36px;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+
+.rule-editor [data-slot="button"][data-variant="outline"]:hover:not(:disabled),
+.rule-editor [data-slot="button"][data-variant="ghost"]:hover:not(:disabled),
+.rule-editor-dialog [data-slot="button"]:hover:not(:disabled) {
+  background: #edf8f6;
+  color: #115e59;
+}
+
+.rule-editor-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid #e3eaf0;
+  border-radius: 12px;
+  background: #f3f6f9;
+}
+
+.rule-editor-mode button {
+  flex: 1;
+  min-height: 38px;
+}
+
+.rule-editor [data-slot="badge"] {
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.rule-editor [data-slot="card-footer"] {
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.rule-editor [data-slot="card-footer"] > :first-child {
+  flex: 1 1 240px;
+  line-height: 1.7;
+}
+
+.rule-editor-preview {
+  min-width: 0;
+}
+
+.rule-editor .rule-editor-preview-card {
+  overflow: hidden;
+  gap: 0;
+  padding: 0;
+  border-color: #cce2e1;
+  background: #f8fbfb;
+}
+
+.rule-editor-preview [data-slot="card-header"] {
+  gap: 12px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #dcebe9;
+  background: #edf7f5;
+}
+
+.rule-editor-preview [data-slot="card-header"] > div {
+  flex-wrap: wrap;
+}
+
+.rule-editor-preview [data-slot="card-description"] {
+  color: #526d7a;
+  line-height: 1.6;
+}
+
+.rule-editor-preview [data-slot="card-content"] {
+  gap: 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.rule-editor-preview [data-slot="card-content"] > div + div {
+  padding-top: 20px;
+  border-top: 1px solid #e1ecec;
+}
+
+.rule-editor-preview [data-slot="card-content"] > div > p:first-child {
+  font-size: 11px;
+  color: #526d7a;
+}
+
+.rule-editor-dialog[data-slot="dialog-content"] {
+  width: calc(100% - 32px);
+  max-width: 560px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 28px;
+  border: 1px solid #d6e1e8;
+  border-radius: 20px;
+  background: #fff;
+  color: #19324c;
+  box-shadow: 0 24px 80px #102c4a30;
+}
+
+.rule-editor-dialog ol > li > span:first-child {
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.rule-editor-dialog [data-slot="dialog-header"] {
+  padding-right: 24px;
+  text-align: left;
+}
+
+.rule-editor-dialog [data-slot="dialog-title"] {
+  color: #19324c;
+  line-height: 1.4;
+}
+
+.rule-editor-dialog [data-slot="dialog-description"] {
+  color: #62748a;
+  line-height: 1.65;
+}
+
+@container (min-width: 600px) {
+  .rule-editor-demographics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rule-editor-condition-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rule-editor-condition-fields > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@container (min-width: 1000px) {
+  .rule-editor-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.47fr);
+    gap: 28px;
+  }
+
+  .rule-editor-preview {
+    position: sticky;
+    top: 24px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 20px;
+  }
+}
+
+@container (max-width: 599px) {
+  .rule-editor [data-slot="card"] {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 16px;
+  }
+
+  .rule-editor [data-slot="card-header"],
+  .rule-editor [data-slot="card-content"],
+  .rule-editor [data-slot="card-footer"] {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .rule-editor .rule-editor-preview-card {
+    padding: 0;
+  }
+
+  .rule-editor .grid.sm\:grid-cols-2,
+  .rule-editor .grid.sm\:grid-cols-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rule-editor [data-slot="card-footer"] > button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rule-editor *,
+  .rule-editor-dialog * {
+    transition: none;
+    animation: none;
+  }
+}
