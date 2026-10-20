@@ -10,6 +10,7 @@ export interface RuleCatalog {
 }
 export interface SavedRule extends RuleDefinition { id: string; revision: number; publishedVersion: number | null }
 export interface RuleVersion { version: number; action: string; authorId: string; createdAt: string; rule: SavedRule }
+export interface RuleImportResponse { importedCount: number; rules: SavedRule[] }
 export type RulePayload = Omit<RuleDefinition, "id" | "status"> & { revision?: number };
 export interface EvaluationRequest {
   groups: string[];
@@ -46,7 +47,7 @@ function detailText(details: unknown): string {
 export async function api<T>(path: string, token?: string, options: RequestInit = {}, language: Language = "de"): Promise<T> {
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
-  if (options.body) headers.set("Content-Type", "application/json");
+  if (options.body && !(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
   let response: Response;
   try {

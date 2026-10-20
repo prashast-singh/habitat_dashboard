@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Activity, ArrowRight, Archive, CheckCircle2, FilePenLine, FlaskConical, HeartPulse, Info, LogOut, Plus, RefreshCw, ShieldCheck } from "lucide-react";
+import { Activity, ArrowRight, Archive, CheckCircle2, Download, FilePenLine, FlaskConical, HeartPulse, Info, LogOut, Plus, RefreshCw, ShieldCheck, Upload } from "lucide-react";
 import Image from "next/image";
 import RuleEditor, { type RuleDefinition } from "@/components/RuleEditor";
-import { API_BASE_URL, ApiError, api, splitRuleDraft, environmentFields, type User, type LoginResponse, type SavedRule, type RuleCatalog, type RuleVersion, type RulePayload, type EvaluationRequest, type EvaluationResponse, type EnvironmentResponse } from "@/lib/api";
+import { API_BASE_URL, ApiError, api, splitRuleDraft, environmentFields, type User, type LoginResponse, type SavedRule, type RuleCatalog, type RuleVersion, type RuleImportResponse, type RulePayload, type EvaluationRequest, type EvaluationResponse, type EnvironmentResponse } from "@/lib/api";
 
 import { LanguageProvider, LanguageSwitcher, useLanguage } from "@/lib/i18n";
 import { translateCatalog, type Language, type Translate } from "@/lib/language";
@@ -132,6 +132,7 @@ function Dashboard({ user, request, logout }: { user: User; request: Request; lo
   const [history, setHistory] = useState<{ name: string; versions: RuleVersion[] } | null>(null);
   const [batch, setBatch] = useState<{ payloads: RulePayload[]; saved: SavedRule[]; updateId?: string } | null>(null);
   const mutationLock = useRef(false);
+  const csvInput = useRef<HTMLInputElement>(null);
   const refresh = useCallback(async () => {
     const [nextRules, nextCatalog] = await Promise.all([request<SavedRule[]>("/rules"), request<RuleCatalog>("/rules/catalog")]);
     setRules(nextRules); setCatalog(nextCatalog);
@@ -184,6 +185,14 @@ function Dashboard({ user, request, logout }: { user: User; request: Request; lo
     if (updateId && editor !== "new" && editor) payloads[0].revision = editor.revision;
     await saveBatch({ payloads, saved: [], updateId });
   }
+  async function importCsv(file: File) {
+    if (!file.name.toLocaleLowerCase().endsWith(".csv")) throw new LocalizedError("Bitte eine CSV-Datei auswählen.", "Select a CSV file.");
+    const form = new FormData();
+    form.append("file", file);
+    const result = await request<RuleImportResponse>("/rules/import", { method: "POST", body: form });
+    setNotice(message(`${result.importedCount} Regel(n) als Entwurf importiert.`, `${result.importedCount} rule(s) imported as drafts.`));
+    await reloadAfterWrite();
+  }
   const visible = rules.filter((rule) => (filter === "all" || rule.status === filter) && `${rule.name} ${rule.description} ${rule.groups.join(" ")} ${rule.groups.map((id) => displayCatalog?.groups.find((group) => group.id === id)?.label ?? id).join(" ")}`.toLocaleLowerCase(language).includes(query.toLocaleLowerCase(language)));
   const existingRecommendations = Array.from(new Map(rules.flatMap((rule) => rule.recommendations).map((item) => [item.id, item])).values());
   const existingSources = Array.from(new Map(rules.flatMap((rule) => rule.sources).map((item) => [item.id, item])).values());
@@ -213,7 +222,7 @@ function Dashboard({ user, request, logout }: { user: User; request: Request; lo
             <RuleEditor key={editor === "new" ? "new" : `${editor.id}-${editor.revision}`} initialValue={editor === "new" ? undefined : editor} catalog={displayCatalog} existingRecommendations={existingRecommendations} existingSources={existingSources} onSave={save} disabled={busy || !!batch} />
           </section>}
           <div hidden={!!editor}>
-          <div className="api-actions api-toolbar"><label className="api-grow">{t("Suche", "Search")}<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Name, Beschreibung oder Gruppe", "Name, description or group")} /></label><label>{t("Status", "Status")}<select value={filter} onChange={(event) => setFilter(event.target.value)}><option value="all">{t("Alle", "All")}</option>{Object.entries(statusLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label><button className="primary" disabled={!user.medicalEditor || busy || !!editor} onClick={() => { setEditor("new"); setError(""); setNotice(""); }}><Plus size={16} />{t("Neue Regel", "New rule")}</button></div>
+          <div className="api-actions api-toolbar"><label className="api-grow">{t("Suche", "Search")}<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Name, Beschreibung oder Gruppe", "Name, description or group")} /></label><label>{t("Status", "Status")}<select value={filter} onChange={(event) => setFilter(event.target.value)}><option value="all">{t("Alle", "All")}</option>{Object.entries(statusLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label><a className="outline" href="/rule-import-template.csv" download><Download size={16} />{t("CSV-Vorlage", "CSV template")}</a><input ref={csvInput} hidden type="file" accept=".csv,text/csv" onChange={(event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ""; if (file) void run(() => importCsv(file)); }} /><button className="outline" disabled={!user.medicalEditor || busy || !!editor || !!batch} onClick={() => csvInput.current?.click()}><Upload size={16} />{t("CSV importieren", "Import CSV")}</button><button className="primary" disabled={!user.medicalEditor || busy || !!editor} onClick={() => { setEditor("new"); setError(""); setNotice(""); }}><Plus size={16} />{t("Neue Regel", "New rule")}</button></div>
           <section className="card api-rule-library"><div className="cardhead"><div><h2>{t("Regelbibliothek", "Rule library")} <span className="api-count">{visible.length}</span></h2><p>{t("Bearbeiten → Entwurf speichern → direkt veröffentlichen. Archivieren entfernt auch die aktive Veröffentlichung; kein endgültiges Löschen.", "Edit → save draft → publish directly. Archiving also removes the active publication; it does not permanently delete the rule.")}</p></div></div><div className="scroll"><table className="api-table"><thead><tr><th>{t("Regel / Gruppen", "Rule / Groups")}</th><th>{t("Status / Version", "Status / Version")}</th><th>{t("Aktionen", "Actions")}</th></tr></thead><tbody>
             {visible.map((rule) => <tr key={rule.id}><td><b className="api-rule-name">{rule.name}</b><p>{rule.description}</p><div className="api-group-tags">{rule.groups.map((id) => <span key={id}>{displayCatalog.groups.find((group) => group.id === id)?.label ?? id}</span>)}</div></td><td><span className={`api-status api-status-${rule.status}`}>{statusLabels[rule.status]}</span><small className="api-rule-version">{t("Revision", "Revision")} {rule.revision}{rule.publishedVersion != null && rule.status !== "archived" ? ` · Live ${rule.publishedVersion}` : t(" · Nicht live", " · Not live")}</small></td><td><div className="api-actions">
               <button className="outline" disabled={!user.medicalEditor || busy || !!editor || rule.status === "archived"} onClick={() => void run(async () => setEditor(await request<SavedRule>(`/rules/${rule.id}`)))}>{t("Bearbeiten", "Edit")}</button>

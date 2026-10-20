@@ -1,0 +1,3 @@
+ruleKey,name,description,groups,ageMin,ageMax,gender,parameter,comparator,value,secondValue,unit,burden,recommendationTitle,recommendationShortText,recommendationLongText,sourceTitle,sourceOrganisation,sourceYear,sourceUrl
+heat-65,Heat warning 65+,Hot weather warning for older people,general;heart,65,,all,temperature,>,30,,°C,yellow,Keep cool,Drink water regularly,Stay in cool rooms and reduce physical activity,DWD heat warning,DWD,2026,https://www.dwd.de/DE/leistungen/hitzewarnung/hitzewarnung.html
+heat-65,Heat warning 65+,Hot weather warning for older people,general;heart,65,,all,humidity,>,70,,%,red,,,,,,,
