@@ -28,11 +28,22 @@ export interface EvaluationResponse {
   status: "NO_RULES" | "NO_APPLICABLE_RULES" | "INCOMPLETE" | "COMPLETE";
   coverage: { totalRules: number; applicableRules: number; evaluatedRules: number; matchedRules: number; unknownRules: number };
 }
+export interface EnvironmentSnapshot {
+  timestamp: string;
+  weatherTimestamp: string | null;
+  airTimestamp: string | null;
+  pollenTimestamp: string | null;
+  uvTimestamp: string | null;
+  uvIndex: number | null;
+  uvLevel: "LOW" | "MODERATE" | "HIGH" | "VERY_HIGH" | "EXTREME" | null;
+  weatherRating: "GOOD" | "MODERATE" | "BAD" | "UNKNOWN";
+  [parameter: string]: number | string | null;
+}
 export interface EnvironmentResponse {
   lat: number;
   lon: number;
-  current: { timestamp: string; [parameter: string]: number | string | null };
-  forecast: unknown[];
+  current: EnvironmentSnapshot;
+  forecast: EnvironmentSnapshot[];
 }
 export class ApiError extends Error {
   constructor(message: string, public status: number, public details?: unknown) { super(message); this.name = "ApiError"; }
@@ -95,7 +106,7 @@ export function splitRuleDraft(rule: RuleDefinition, catalog: RuleCatalog, langu
 }
 
 export const environmentFields: Record<string, string> = {
-  temperature: "temperature", humidity: "humidity", pm25: "pm25", aqi: "aqi", ozone: "ozone",
+  temperature: "temperature", humidity: "humidity", pm25: "pm25", aqi: "aqi", ozone: "ozone", "uv-index": "uvIndex",
   "pressure-drop": "pressureDrop", "birch-pollen": "birchPollen", "grass-pollen": "grassPollen",
   "mugwort-pollen": "mugwortPollen", "alder-pollen": "alderPollen", "ragweed-pollen": "ragweedPollen",
 };
